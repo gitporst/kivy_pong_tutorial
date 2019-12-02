@@ -13,11 +13,27 @@ class PongPaddle(Widget):
     def bounce_ball(self, ball):
         if self.collide_widget(ball):
             vx, vy = ball.velocity
-            offset = (ball.center_y - self.center_y) / (self.height / 2)
-            bounced = Vector(-1 * vx, vy)
+            distx = (ball.center_x - self.center_x) * vx / abs(vx) * -1
+            disty = abs(ball.center_y - self.center_y)
+            b = self.top - self.width / 2 - self.center_y
+            # this determines whether the paddle is hit at the end
+            # the latter term distx checks if there are some glitches due to very quick paddle movement
+            if disty > b + distx or distx < 0:
+                offset = 0
+                # hit above, set back ball and let ball move upwards
+                if ball.center_y > self.center_y:
+                    ball.y = self.top
+                    bounced = Vector(vx, abs(vy))
+                # hit below, set back ball and let ball move downwards
+                else:
+                    ball.y = self.y - ball.height
+                    bounced = Vector(vx, -1 * abs(vy))
+            else:
+                # this offset lets the bounce angle decrease depending on how far to the edge the ball is hit
+                offset = (ball.center_y - self.center_y) / (self.height / 2)
+                bounced = Vector(-1 * vx, vy)
             vel = bounced * 1.1
             ball.velocity = vel.x, vel.y + offset
-
 
 class PongBall(Widget):
     velocity_x = NumericProperty(0)

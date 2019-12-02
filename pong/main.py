@@ -5,6 +5,8 @@ from kivy.properties import (
 )
 from kivy.vector import Vector
 from kivy.clock import Clock
+from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
+from kivy.lang import Builder
 
 
 class PongPaddle(Widget):
@@ -35,6 +37,7 @@ class PongPaddle(Widget):
             vel = bounced * 1.1
             ball.velocity = vel.x, vel.y + offset
 
+
 class PongBall(Widget):
     velocity_x = NumericProperty(0)
     velocity_y = NumericProperty(0)
@@ -48,6 +51,10 @@ class PongGame(Widget):
     ball = ObjectProperty(None)
     player1 = ObjectProperty(None)
     player2 = ObjectProperty(None)
+
+    def start_game(self):
+        self.serve_ball()
+        Clock.schedule_interval(self.update, 1.0 / 60.0)
 
     def serve_ball(self, vel=(4, 0)):
         self.ball.center = self.center
@@ -79,12 +86,30 @@ class PongGame(Widget):
             self.player2.center_y = touch.y
 
 
-class PongApp(App):
-    def build(self):
+class MenuScreen(Screen):
+    pass
+
+
+class GameScreen(Screen):
+    pass
+    """"
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         game = PongGame()
         game.serve_ball()
         Clock.schedule_interval(game.update, 1.0 / 60.0)
-        return game
+    """
+
+class PongManager(ScreenManager):
+    pass
+
+
+main_kivy = Builder.load_file('pong.kv')
+
+
+class PongApp(App):
+    def build(self):
+        return main_kivy
 
 
 if __name__ == '__main__':

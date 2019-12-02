@@ -1,4 +1,25 @@
 #:kivy 1.11.1
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+PongManager:
+    transition: FadeTransition()
+    MenuScreen:
+    GameScreen:
+
+<MenuScreen>
+    name: 'menu'
+    GridLayout:
+        name: "menu"
+        cols: 1
+        Button:
+            id: btnPlay
+            text: "Play"
+            on_release: app.root.current = 'game'
+
+        Button:
+            id: btnExit
+            text: "Exit"
+            on_press: app.stop()
 
 <PongBall>:
     size: 50, 50
@@ -49,3 +70,21 @@
         id: player_right
         x: root.width - self.width
         center_y: root.center_y
+
+<GameScreen>
+    name: 'game'
+    PongGame
+    Button:
+        id: btnPause
+        text: "Pause"
+        on_release: app.root.current = 'menu'
+        size_hint: None, None
+        pos_hint: {'right': 1, 'top': 1}
+    Button:
+        id: btnStart
+        text: "Start"
+        on_release: print(app.root)
+        size_hint: None, None
+        pos_hint: {'left': 1, 'top': 1}
+
+
